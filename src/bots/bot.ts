@@ -1,22 +1,20 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
-// Licensed under the MIT License.
-
 import { ActivityHandler, MessageFactory } from "botbuilder";
 
-export class EchoBot extends ActivityHandler {
+export default class Bot extends ActivityHandler {
   constructor() {
     super();
-    // See https://aka.ms/about-bot-activity-message to learn more about the message and other activity types.
+
     this.onMessage(async (context, next) => {
       const replyText = `Echo: ${context.activity.text}`;
       await context.sendActivity(MessageFactory.text(replyText, replyText));
-      // By calling next() you ensure that the next BotHandler is run.
+
       await next();
     });
 
     this.onMembersAdded(async (context, next) => {
       const membersAdded = context.activity.membersAdded;
-      const welcomeText = "Hello and welcome!";
+      const welcomeText = "Welcome to doc bot!";
+
       for (const member of membersAdded) {
         if (member.id !== context.activity.recipient.id) {
           await context.sendActivity(
@@ -24,7 +22,7 @@ export class EchoBot extends ActivityHandler {
           );
         }
       }
-      // By calling next() you ensure that the next BotHandler is run.
+
       await next();
     });
   }
