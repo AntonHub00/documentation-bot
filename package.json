@@ -9,7 +9,7 @@
     "build": "tsc --build",
     "postinstall": "npm run build && node ./deploymentScripts/webConfigPrep.js",
     "start": "npm run build && node ./lib/index.js",
-    "dev": "nodemon --watch ./src -e ts --exec \"npm run start\""
+    "dev": "nodemon --watch ./src -e ts,json --exec \"npm run start\""
   },
   "repository": {
     "type": "git",
