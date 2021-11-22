@@ -14,7 +14,7 @@ const documentationDTOStateName = "documentationDTOStateName";
 const choicePromptId = "choicePromptId";
 const waterfallDialogId = "waterfallDialogId";
 
-export default class AddDocumentationDialog extends ComponentDialog {
+export default class MainDocumentationDialog extends ComponentDialog {
   private documentationDTO: StatePropertyAccessor<DocumentationDTO>;
 
   constructor(userState: UserState) {

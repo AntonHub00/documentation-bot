@@ -8,7 +8,7 @@ import {
   UserState,
 } from "botbuilder";
 import { Dialog, DialogState } from "botbuilder-dialogs";
-import AddDocumentationDialog from "../dialogs/addDocumentationDialog/addDocumentationDialog";
+import MainDocumentationDialog from "../dialogs/mainDocumentationDialog/mainDocumentationDialog";
 
 class DocumentationBot extends ActivityHandler {
   private cancelToken = "cancel";
@@ -41,7 +41,7 @@ class DocumentationBot extends ActivityHandler {
         }
       }
 
-      await (this.dialog as AddDocumentationDialog).run(
+      await (this.dialog as MainDocumentationDialog).run(
         context,
         this.dialogState
       );
@@ -57,7 +57,7 @@ class DocumentationBot extends ActivityHandler {
         await this.dialogState.delete(context);
       }
 
-      await (this.dialog as AddDocumentationDialog).run(
+      await (this.dialog as MainDocumentationDialog).run(
         context,
         this.dialogState
       );
@@ -81,7 +81,7 @@ const conversationState = new ConversationState(memoryStorage);
 const userState = new UserState(memoryStorage);
 
 // Create the main dialog.
-const dialog = new AddDocumentationDialog(userState);
+const dialog = new MainDocumentationDialog(userState);
 const documentationBotInstance = new DocumentationBot(
   conversationState,
   userState,
