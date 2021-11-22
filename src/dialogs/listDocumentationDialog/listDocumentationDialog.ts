@@ -1,3 +1,4 @@
+import { CardFactory } from "botbuilder";
 import {
   ComponentDialog,
   PromptOptions,
@@ -5,12 +6,24 @@ import {
   WaterfallDialog,
   WaterfallStepContext,
 } from "botbuilder-dialogs";
+import { Activity } from "botframework-schema";
+
+import * as documentationCard from "./documentationCard.json";
+import * as ACData from "adaptivecards-templating";
 
 const listDocumentationDialogId = "listDocumentationDialogId";
 const textPromptId = "textPromptId";
 const waterfallDialogId = "waterfallDialogId";
 
+interface CardsData {
+  name: string;
+  description: string;
+  link: string;
+}
+
 class ListDocumentationDialog extends ComponentDialog {
+  private filterDoneToken = "done";
+
   constructor() {
     super(listDocumentationDialogId);
 
@@ -18,30 +31,96 @@ class ListDocumentationDialog extends ComponentDialog {
 
     this.addDialog(
       new WaterfallDialog(waterfallDialogId, [
-        this.getDocumentationNameStep.bind(this),
-        this.summaryStep.bind(this),
+        this.getDocumentationSearchTokenStep.bind(this),
+        this.loopFilterCardsStep.bind(this),
+        this.endDialogStep.bind(this),
       ])
     );
 
     this.initialDialogId = waterfallDialogId;
   }
 
-  private async getDocumentationNameStep(stepContext: WaterfallStepContext) {
+  private buildTemplate(name: string, description: string, link: string) {
+    const template = new ACData.Template(documentationCard);
+
+    const cardPayload = template.expand({
+      $root: {
+        name,
+        description,
+        link,
+      },
+    });
+
+    return cardPayload;
+  }
+
+  private async buildActivityDocumentationCards(
+    cardsData: CardsData[]
+  ): Promise<Partial<Activity>> {
+    const activity: Partial<Activity> = {
+      text: "Here's what I found:",
+      attachments: cardsData.map((card) =>
+        CardFactory.adaptiveCard(
+          this.buildTemplate(card.name, card.description, card.link)
+        )
+      ),
+      attachmentLayout: "carousel",
+    };
+
+    return activity;
+  }
+
+  private async getDocumentationSearchTokenStep(
+    stepContext: WaterfallStepContext
+  ) {
     const promptOptions: PromptOptions = {
-      prompt: "Enter the name of the documentation.",
+      prompt: `Type to filter documentation or type "*" to get all. To finish type "${this.filterDoneToken}"`,
     };
 
     return await stepContext.prompt(textPromptId, promptOptions);
   }
 
-  private async summaryStep(stepContext: WaterfallStepContext) {
-    const selection = stepContext.result;
+  private async loopFilterCardsStep(stepContext: WaterfallStepContext) {
+    const searchToken = stepContext.result;
 
-    await stepContext.context.sendActivity(
-      `You selected the project "${selection}"`
-    );
+    if (searchToken === this.filterDoneToken) return await stepContext.next();
 
-    return await stepContext.endDialog(selection);
+    // NOTE: Perform some filter logic for the given search token.
+
+    const testCards: CardsData[] = [
+      {
+        name: "Documentation name 1",
+        description: "Documentation description 1",
+        link: "https://en.wikipedia.org/wiki/PDF",
+      },
+      {
+        name: "Documentation name 2",
+        description: "Documentation description 2",
+        link: "https://en.wikipedia.org/wiki/PDF",
+      },
+      {
+        name: "Documentation name 3",
+        description: "Documentation description 3",
+        link: "https://en.wikipedia.org/wiki/PDF",
+      },
+      {
+        name: "Documentation name 4",
+        description: "Documentation description 4",
+        link: "https://en.wikipedia.org/wiki/PDF",
+      },
+    ];
+
+    const cardsActivity = await this.buildActivityDocumentationCards(testCards);
+
+    await stepContext.context.sendActivity(cardsActivity);
+
+    return await stepContext.replaceDialog(listDocumentationDialogId);
+  }
+
+  private async endDialogStep(stepContext: WaterfallStepContext) {
+    await stepContext.context.sendActivity("List action finished!");
+
+    return await stepContext.endDialog();
   }
 }
 

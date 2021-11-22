@@ -1,0 +1,25 @@
+{
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "type": "AdaptiveCard",
+  "version": "1.0",
+  "body": [
+    {
+      "type": "TextBlock",
+      "text": "${name}",
+      "size": "large"
+    },
+    {
+      "type": "TextBlock",
+      "text": "${description}",
+      "size": "small",
+      "weight": "lighter"
+    }
+  ],
+  "actions": [
+    {
+      "type": "Action.OpenUrl",
+      "title": "Open",
+      "url": "${link}"
+    }
+  ]
+}
