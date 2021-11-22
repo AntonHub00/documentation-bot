@@ -1,23 +1,24 @@
-import { ConversationState, MemoryStorage, UserState } from "botbuilder";
 import { Request, Response } from "restify";
 import adapter from "../adapters/adapter";
-import Bot from "../bots/bot";
-import AddDocumentationDialog from "../dialogs/addDocumentationDialog/addDocumentationDialog";
+import documentationBotInstance, {
+  DocumentationBot,
+} from "../bots/documentationBot";
 
-const memoryStorage = new MemoryStorage();
+class DocumentationBotController {
+  private documentationBotInstance: DocumentationBot;
 
-// Create conversation state with in-memory storage provider.
-const conversationState = new ConversationState(memoryStorage);
-const userState = new UserState(memoryStorage);
+  constructor() {
+    this.documentationBotInstance = documentationBotInstance;
+    this.process = this.process.bind(this);
+  }
 
-// Create the main dialog.
-const dialog = new AddDocumentationDialog(userState);
-const myBot = new Bot(conversationState, userState, dialog);
+  public async process(req: Request, res: Response) {
+    adapter.process(req, res, (context) =>
+      this.documentationBotInstance.run(context)
+    );
+  }
+}
 
-const handleAPIMessages = async (req: Request, res: Response) => {
-  adapter.process(req, res, (context) => myBot.run(context));
-};
+const documentationBotControllerInstance = new DocumentationBotController();
 
-export default {
-  handleAPIMessages,
-};
+export default documentationBotControllerInstance;

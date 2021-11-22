@@ -2,6 +2,7 @@ import {
   ActivityHandler,
   BotState,
   ConversationState,
+  MemoryStorage,
   MessageFactory,
   StatePropertyAccessor,
   UserState,
@@ -9,7 +10,7 @@ import {
 import { Dialog, DialogState } from "botbuilder-dialogs";
 import AddDocumentationDialog from "../dialogs/addDocumentationDialog/addDocumentationDialog";
 
-export default class Bot extends ActivityHandler {
+class DocumentationBot extends ActivityHandler {
   private cancelToken = "cancel";
   private dialog: Dialog;
   private dialogState: StatePropertyAccessor<DialogState>;
@@ -72,3 +73,20 @@ export default class Bot extends ActivityHandler {
     });
   }
 }
+
+const memoryStorage = new MemoryStorage();
+
+// Create conversation state with in-memory storage provider.
+const conversationState = new ConversationState(memoryStorage);
+const userState = new UserState(memoryStorage);
+
+// Create the main dialog.
+const dialog = new AddDocumentationDialog(userState);
+const documentationBotInstance = new DocumentationBot(
+  conversationState,
+  userState,
+  dialog
+);
+
+export default documentationBotInstance;
+export { DocumentationBot, conversationState };
