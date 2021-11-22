@@ -1,4 +1,5 @@
 import { BotFrameworkAdapter } from "botbuilder";
+import { conversationState } from "../bots/documentationBot";
 
 const adapter = new BotFrameworkAdapter({
   appId: process.env.MicrosoftAppId,
@@ -18,6 +19,8 @@ adapter.onTurnError = async (context, error) => {
   await context.sendActivity(
     "There was an error with the bot. We apologize for the inconvenience"
   );
+
+  await conversationState.clear(context);
 };
 
 export default adapter;
