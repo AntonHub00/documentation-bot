@@ -10,6 +10,11 @@ import {
 } from "botbuilder-dialogs";
 import DocumentationDTO from "../documentationDTO";
 
+import ListDocumentationDialog, {
+  listDocumentationDialogId,
+} from "../listDocumentationDialog/listDocumentationDialog";
+
+const mainDocumentationDialogId = "mainDocumentationDialogId";
 const documentationDTOStateName = "documentationDTOStateName";
 const choicePromptId = "choicePromptId";
 const waterfallDialogId = "waterfallDialogId";
@@ -18,15 +23,18 @@ export default class MainDocumentationDialog extends ComponentDialog {
   private documentationDTO: StatePropertyAccessor<DocumentationDTO>;
 
   constructor(userState: UserState) {
-    super("documentationDialog");
+    super(mainDocumentationDialogId);
 
     this.documentationDTO = userState.createProperty(documentationDTOStateName);
 
     this.addDialog(new ChoicePrompt(choicePromptId));
 
+    this.addDialog(new ListDocumentationDialog());
+
     this.addDialog(
       new WaterfallDialog(waterfallDialogId, [
         this.crudStep.bind(this),
+        this.initializeDocumentationActionDialog.bind(this),
         this.summaryStep.bind(this),
       ])
     );
@@ -54,10 +62,22 @@ export default class MainDocumentationDialog extends ComponentDialog {
     });
   }
 
+  private async initializeDocumentationActionDialog(
+    stepContext: WaterfallStepContext
+  ) {
+    const selection = stepContext.result.value;
+
+    if (selection === "List") {
+      return await stepContext.beginDialog(listDocumentationDialogId);
+    }
+
+    return await stepContext.continueDialog();
+  }
+
   private async summaryStep(
     stepContext: WaterfallStepContext<DocumentationDTO>
   ) {
-    const selection = stepContext.result.value;
+    const selection = stepContext.result;
 
     await stepContext.context.sendActivity(
       `Thanks. You have selected "${selection}"`
