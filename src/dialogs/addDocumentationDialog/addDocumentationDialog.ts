@@ -15,7 +15,7 @@ import { Activity } from "botframework-schema";
 import conversationState, {
   conversationStateAccessorName,
 } from "../../states/state";
-import DocumentationDTO from "../documentationDTO";
+import IDocumentationData from "../IDocumentationData";
 
 import * as addDocumentationCard from "./addDocumentationCard.json";
 
@@ -25,7 +25,7 @@ const choicePromptId = "choicePromptId";
 const waterfallDialogId = "waterfallDialogId";
 
 class AddDocumentationDialog extends ComponentDialog {
-  private conversationStateAccessor: StatePropertyAccessor<DocumentationDTO>;
+  private conversationStateAccessor: StatePropertyAccessor<IDocumentationData>;
 
   constructor() {
     super(addDocumentationDialogId);

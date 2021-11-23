@@ -7,7 +7,7 @@ import {
   TurnContext,
 } from "botbuilder";
 import { Dialog } from "botbuilder-dialogs";
-import DocumentationDTO from "../dialogs/documentationDTO";
+import IDocumentationData from "../dialogs/IDocumentationData";
 import MainDocumentationDialog from "../dialogs/mainDocumentationDialog/mainDocumentationDialog";
 import conversationState, {
   conversationStateAccessorName,
@@ -17,7 +17,7 @@ export default class DocumentationBot extends ActivityHandler {
   private restartToken = "restart";
   private mainDialog: Dialog;
   private conversationState: BotState;
-  private conversationStateAccesor: StatePropertyAccessor<DocumentationDTO>;
+  private conversationStateAccesor: StatePropertyAccessor<IDocumentationData>;
 
   constructor() {
     super();
