@@ -12,7 +12,7 @@ import MainDocumentationDialog from "../dialogs/mainDocumentationDialog/mainDocu
 const conversationStateAccessorName = "conversationStateAccessorName";
 
 class DocumentationBot extends ActivityHandler {
-  private cancelToken = "cancel";
+  private restartToken = "restart";
   private dialog: Dialog;
   private conversationState: BotState;
   private conversationStateAccesor: StatePropertyAccessor<DialogState>;
@@ -28,7 +28,7 @@ class DocumentationBot extends ActivityHandler {
 
     this.onMembersAdded(async (context, next) => {
       const membersAdded = context.activity.membersAdded;
-      const welcomeText = `Welcome to documentation bot! \n\n ***You can type "${this.cancelToken}" any time to reset the conversation***`;
+      const welcomeText = `Welcome to documentation bot! \n\n ***You can type "${this.restartToken}" anytime to restart the conversation***`;
 
       for (const member of membersAdded) {
         if (member.id !== context.activity.recipient.id) {
@@ -47,9 +47,9 @@ class DocumentationBot extends ActivityHandler {
     });
 
     this.onMessage(async (context, next) => {
-      const cancelText = "I'll cancel that";
+      const cancelText = "Restarting...";
 
-      if (context.activity.text === this.cancelToken) {
+      if (context.activity.text === this.restartToken) {
         await context.sendActivity(MessageFactory.text(cancelText, cancelText));
         await this.conversationStateAccesor.delete(context);
       }
