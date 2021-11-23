@@ -1,4 +1,9 @@
-import { StatePropertyAccessor, TurnContext, UserState } from "botbuilder-core";
+import {
+  BotState,
+  ConversationState,
+  StatePropertyAccessor,
+  TurnContext,
+} from "botbuilder-core";
 import {
   ChoiceFactory,
   ChoicePrompt,
@@ -8,7 +13,6 @@ import {
   WaterfallDialog,
   WaterfallStepContext,
 } from "botbuilder-dialogs";
-import DocumentationDTO from "../documentationDTO";
 
 import ListDocumentationDialog, {
   listDocumentationDialogId,
@@ -20,12 +24,12 @@ const choicePromptId = "choicePromptId";
 const waterfallDialogId = "waterfallDialogId";
 
 export default class MainDocumentationDialog extends ComponentDialog {
-  private documentationDTO: StatePropertyAccessor<DocumentationDTO>;
+  private conversationState: BotState;
 
-  constructor(userState: UserState) {
+  constructor(conversationState: ConversationState) {
     super(mainDocumentationDialogId);
 
-    this.documentationDTO = userState.createProperty(documentationDTOStateName);
+    this.conversationState = conversationState;
 
     this.addDialog(new ChoicePrompt(choicePromptId));
 
@@ -74,9 +78,7 @@ export default class MainDocumentationDialog extends ComponentDialog {
     return await stepContext.continueDialog();
   }
 
-  private async summaryStep(
-    stepContext: WaterfallStepContext<DocumentationDTO>
-  ) {
+  private async summaryStep(stepContext: WaterfallStepContext) {
     const selection = stepContext.result;
 
     await stepContext.context.sendActivity(

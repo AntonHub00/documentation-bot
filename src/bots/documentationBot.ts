@@ -5,29 +5,26 @@ import {
   MemoryStorage,
   MessageFactory,
   StatePropertyAccessor,
-  UserState,
 } from "botbuilder";
 import { Dialog, DialogState } from "botbuilder-dialogs";
 import MainDocumentationDialog from "../dialogs/mainDocumentationDialog/mainDocumentationDialog";
 
+const conversationStateAccessorName = "conversationStateAccessorName";
+
 class DocumentationBot extends ActivityHandler {
   private cancelToken = "cancel";
   private dialog: Dialog;
-  private dialogState: StatePropertyAccessor<DialogState>;
   private conversationState: BotState;
-  private userState: BotState;
+  private conversationStateAccesor: StatePropertyAccessor<DialogState>;
 
-  constructor(
-    conversationState: BotState,
-    userState: BotState,
-    dialog: Dialog
-  ) {
+  constructor(conversationState: BotState, dialog: Dialog) {
     super();
 
     this.dialog = dialog;
     this.conversationState = conversationState as ConversationState;
-    this.userState = userState as UserState;
-    this.dialogState = this.conversationState.createProperty("DialogState");
+    this.conversationStateAccesor = this.conversationState.createProperty(
+      conversationStateAccessorName
+    );
 
     this.onMembersAdded(async (context, next) => {
       const membersAdded = context.activity.membersAdded;
@@ -43,7 +40,7 @@ class DocumentationBot extends ActivityHandler {
 
       await (this.dialog as MainDocumentationDialog).run(
         context,
-        this.dialogState
+        this.conversationStateAccesor
       );
 
       await next();
@@ -54,12 +51,12 @@ class DocumentationBot extends ActivityHandler {
 
       if (context.activity.text === this.cancelToken) {
         await context.sendActivity(MessageFactory.text(cancelText, cancelText));
-        await this.dialogState.delete(context);
+        await this.conversationStateAccesor.delete(context);
       }
 
       await (this.dialog as MainDocumentationDialog).run(
         context,
-        this.dialogState
+        this.conversationStateAccesor
       );
 
       await next();
@@ -68,7 +65,6 @@ class DocumentationBot extends ActivityHandler {
     this.onDialog(async (context, next) => {
       // Save any state changes. The load happened during the execution of the Dialog.
       await this.conversationState.saveChanges(context, false);
-      await this.userState.saveChanges(context, false);
       await next();
     });
   }
@@ -78,15 +74,13 @@ const memoryStorage = new MemoryStorage();
 
 // Create conversation state with in-memory storage provider.
 const conversationState = new ConversationState(memoryStorage);
-const userState = new UserState(memoryStorage);
 
 // Create the main dialog.
-const dialog = new MainDocumentationDialog(userState);
+const dialog = new MainDocumentationDialog(conversationState);
 const documentationBotInstance = new DocumentationBot(
   conversationState,
-  userState,
   dialog
 );
 
 export default documentationBotInstance;
-export { DocumentationBot, conversationState };
+export { DocumentationBot, conversationState, conversationStateAccessorName };
