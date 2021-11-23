@@ -1,5 +1,5 @@
 import { BotFrameworkAdapter } from "botbuilder";
-import { conversationState } from "../bots/documentationBot";
+import conversationState from "../states/state";
 
 const adapter = new BotFrameworkAdapter({
   appId: process.env.MicrosoftAppId,

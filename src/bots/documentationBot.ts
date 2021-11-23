@@ -2,7 +2,6 @@ import {
   ActivityHandler,
   BotState,
   ConversationState,
-  MemoryStorage,
   MessageFactory,
   StatePropertyAccessor,
   TurnContext,
@@ -10,8 +9,9 @@ import {
 import { Dialog } from "botbuilder-dialogs";
 import DocumentationDTO from "../dialogs/documentationDTO";
 import MainDocumentationDialog from "../dialogs/mainDocumentationDialog/mainDocumentationDialog";
-
-const conversationStateAccessorName = "conversationStateAccessorName";
+import conversationState, {
+  conversationStateAccessorName,
+} from "../states/state";
 
 class DocumentationBot extends ActivityHandler {
   private restartToken = "restart";
@@ -19,7 +19,7 @@ class DocumentationBot extends ActivityHandler {
   private conversationState: BotState;
   private conversationStateAccesor: StatePropertyAccessor<DocumentationDTO>;
 
-  constructor(conversationState: BotState, dialog: Dialog) {
+  constructor(dialog: Dialog) {
     super();
 
     this.dialog = dialog;
@@ -84,27 +84,19 @@ class DocumentationBot extends ActivityHandler {
     // If true it means that the user sent info from the "add documentation"
     // adaptive card
     if (value && "name" in value && "description" in value && "link" in value) {
-      const conversationState = await this.conversationStateAccesor.get(
+      const currentConversationState = await this.conversationStateAccesor.get(
         context
       );
-      conversationState.name = value.name;
-      conversationState.description = value.description;
-      conversationState.link = value.link;
+      currentConversationState.name = value.name;
+      currentConversationState.description = value.description;
+      currentConversationState.link = value.link;
     }
   }
 }
 
-const memoryStorage = new MemoryStorage();
-
-// Create conversation state with in-memory storage provider.
-const conversationState = new ConversationState(memoryStorage);
-
 // Create the main dialog.
-const dialog = new MainDocumentationDialog(conversationState);
-const documentationBotInstance = new DocumentationBot(
-  conversationState,
-  dialog
-);
+const dialog = new MainDocumentationDialog();
+const documentationBotInstance = new DocumentationBot(dialog);
 
 export default documentationBotInstance;
-export { DocumentationBot, conversationState, conversationStateAccessorName };
+export { DocumentationBot };

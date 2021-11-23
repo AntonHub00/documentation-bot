@@ -1,9 +1,4 @@
-import {
-  BotState,
-  ConversationState,
-  StatePropertyAccessor,
-  TurnContext,
-} from "botbuilder-core";
+import { StatePropertyAccessor, TurnContext } from "botbuilder-core";
 import {
   ChoiceFactory,
   ChoicePrompt,
@@ -27,17 +22,13 @@ const choicePromptId = "choicePromptId";
 const waterfallDialogId = "waterfallDialogId";
 
 export default class MainDocumentationDialog extends ComponentDialog {
-  private conversationState: BotState;
-
-  constructor(conversationState: ConversationState) {
+  constructor() {
     super(mainDocumentationDialogId);
-
-    this.conversationState = conversationState;
 
     this.addDialog(new ChoicePrompt(choicePromptId));
 
     this.addDialog(new ListDocumentationDialog());
-    this.addDialog(new AddDocumentationDialog(conversationState));
+    this.addDialog(new AddDocumentationDialog());
 
     this.addDialog(
       new WaterfallDialog(waterfallDialogId, [
@@ -80,10 +71,7 @@ export default class MainDocumentationDialog extends ComponentDialog {
     }
 
     if (selection === "Add") {
-      return await stepContext.beginDialog(
-        addDocumentationDialogId,
-        this.conversationState
-      );
+      return await stepContext.beginDialog(addDocumentationDialogId);
     }
 
     return await stepContext.continueDialog();

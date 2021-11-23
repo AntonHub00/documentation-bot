@@ -12,7 +12,9 @@ import {
   WaterfallStepContext,
 } from "botbuilder-dialogs";
 import { Activity } from "botframework-schema";
-import { conversationStateAccessorName } from "../../bots/documentationBot";
+import conversationState, {
+  conversationStateAccessorName,
+} from "../../states/state";
 import DocumentationDTO from "../documentationDTO";
 
 import * as addDocumentationCard from "./addDocumentationCard.json";
@@ -25,7 +27,7 @@ const waterfallDialogId = "waterfallDialogId";
 class AddDocumentationDialog extends ComponentDialog {
   private conversationStateAccessor: StatePropertyAccessor<DocumentationDTO>;
 
-  constructor(conversationState: ConversationState) {
+  constructor() {
     super(addDocumentationDialogId);
 
     this.conversationStateAccessor = conversationState.createProperty(
