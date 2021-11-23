@@ -13,16 +13,16 @@ import conversationState, {
   conversationStateAccessorName,
 } from "../states/state";
 
-class DocumentationBot extends ActivityHandler {
+export default class DocumentationBot extends ActivityHandler {
   private restartToken = "restart";
-  private dialog: Dialog;
+  private mainDialog: Dialog;
   private conversationState: BotState;
   private conversationStateAccesor: StatePropertyAccessor<DocumentationDTO>;
 
-  constructor(dialog: Dialog) {
+  constructor() {
     super();
 
-    this.dialog = dialog;
+    this.mainDialog = new MainDocumentationDialog();
     this.conversationState = conversationState as ConversationState;
     this.conversationStateAccesor = this.conversationState.createProperty(
       conversationStateAccessorName
@@ -40,7 +40,7 @@ class DocumentationBot extends ActivityHandler {
         }
       }
 
-      await (this.dialog as MainDocumentationDialog).run(
+      await (this.mainDialog as MainDocumentationDialog).run(
         context,
         this.conversationStateAccesor
       );
@@ -61,7 +61,7 @@ class DocumentationBot extends ActivityHandler {
         await this.conversationStateAccesor.delete(context);
       }
 
-      await (this.dialog as MainDocumentationDialog).run(
+      await (this.mainDialog as MainDocumentationDialog).run(
         context,
         this.conversationStateAccesor
       );
@@ -93,10 +93,3 @@ class DocumentationBot extends ActivityHandler {
     }
   }
 }
-
-// Create the main dialog.
-const dialog = new MainDocumentationDialog();
-const documentationBotInstance = new DocumentationBot(dialog);
-
-export default documentationBotInstance;
-export { DocumentationBot };

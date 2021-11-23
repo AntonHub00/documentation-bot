@@ -1,14 +1,12 @@
 import { Request, Response } from "restify";
 import adapter from "../adapters/adapter";
-import documentationBotInstance, {
-  DocumentationBot,
-} from "../bots/documentationBot";
+import DocumentationBot from "../bots/documentationBot";
 
 class DocumentationBotController {
   private documentationBotInstance: DocumentationBot;
 
   constructor() {
-    this.documentationBotInstance = documentationBotInstance;
+    this.documentationBotInstance = new DocumentationBot();
     this.process = this.process.bind(this);
   }
 
