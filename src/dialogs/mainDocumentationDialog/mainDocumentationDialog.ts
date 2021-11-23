@@ -22,6 +22,8 @@ const choicePromptId = "choicePromptId";
 const waterfallDialogId = "waterfallDialogId";
 
 export default class MainDocumentationDialog extends ComponentDialog {
+  private actions = { list: "List", add: "Add" };
+
   constructor() {
     super(mainDocumentationDialogId);
 
@@ -56,7 +58,7 @@ export default class MainDocumentationDialog extends ComponentDialog {
 
   private async crudStep(stepContext: WaterfallStepContext) {
     return await stepContext.prompt(choicePromptId, {
-      choices: ChoiceFactory.toChoices(["List", "Add", "Edit", "Remove"]),
+      choices: ChoiceFactory.toChoices(Object.values(this.actions)),
       prompt: "Please enter the documentation action.",
     });
   }
@@ -66,15 +68,15 @@ export default class MainDocumentationDialog extends ComponentDialog {
   ) {
     const selection = stepContext.result.value;
 
-    if (selection === "List") {
+    if (selection === this.actions.list) {
       return await stepContext.beginDialog(listDocumentationDialogId);
     }
 
-    if (selection === "Add") {
+    if (selection === this.actions.add) {
       return await stepContext.beginDialog(addDocumentationDialogId);
     }
 
-    return await stepContext.continueDialog();
+    return await stepContext.next();
   }
 
   private async summaryStep(stepContext: WaterfallStepContext) {
