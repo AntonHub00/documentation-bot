@@ -6,20 +6,39 @@
     {
       "type": "TextBlock",
       "text": "${name}",
-      "size": "large"
+      "size": "large",
+      "wrap": true
     },
     {
       "type": "TextBlock",
       "text": "${description}",
       "size": "small",
-      "weight": "lighter"
-    }
-  ],
-  "actions": [
+      "weight": "lighter",
+      "wrap": true
+    },
     {
-      "type": "Action.OpenUrl",
-      "title": "Open",
-      "url": "${link}"
+      "type": "ActionSet",
+      "actions": [
+        {
+          "type": "Action.OpenUrl",
+          "title": "Open",
+          "url": "${link}"
+        },
+        {
+          "type": "Action.Submit",
+          "title": "Edit",
+          "data": {
+            "id": "${id}"
+          }
+        },
+        {
+          "type": "Action.Submit",
+          "title": "Delete",
+          "data": {
+            "id": "${id}"
+          }
+        }
+      ]
     }
   ]
 }
