@@ -5,8 +5,10 @@ import {
   MemoryStorage,
   MessageFactory,
   StatePropertyAccessor,
+  TurnContext,
 } from "botbuilder";
-import { Dialog, DialogState } from "botbuilder-dialogs";
+import { Dialog } from "botbuilder-dialogs";
+import DocumentationDTO from "../dialogs/documentationDTO";
 import MainDocumentationDialog from "../dialogs/mainDocumentationDialog/mainDocumentationDialog";
 
 const conversationStateAccessorName = "conversationStateAccessorName";
@@ -15,7 +17,7 @@ class DocumentationBot extends ActivityHandler {
   private restartToken = "restart";
   private dialog: Dialog;
   private conversationState: BotState;
-  private conversationStateAccesor: StatePropertyAccessor<DialogState>;
+  private conversationStateAccesor: StatePropertyAccessor<DocumentationDTO>;
 
   constructor(conversationState: BotState, dialog: Dialog) {
     super();
@@ -46,6 +48,11 @@ class DocumentationBot extends ActivityHandler {
       await next();
     });
 
+    this.onTurn(async (context, next) => {
+      await this.fillStateWithDataFromAddDocumentationAdaptiveCard(context);
+      await next();
+    });
+
     this.onMessage(async (context, next) => {
       const cancelText = "Restarting...";
 
@@ -67,6 +74,23 @@ class DocumentationBot extends ActivityHandler {
       await this.conversationState.saveChanges(context, false);
       await next();
     });
+  }
+
+  private async fillStateWithDataFromAddDocumentationAdaptiveCard(
+    context: TurnContext
+  ) {
+    const value = context.activity.value;
+
+    // If true it means that the user sent info from the "add documentation"
+    // adaptive card
+    if (value && "name" in value && "description" in value && "link" in value) {
+      const conversationState = await this.conversationStateAccesor.get(
+        context
+      );
+      conversationState.name = value.name;
+      conversationState.description = value.description;
+      conversationState.link = value.link;
+    }
   }
 }
 

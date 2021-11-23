@@ -1,0 +1,50 @@
+{
+  "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+  "type": "AdaptiveCard",
+  "version": "1.3",
+  "body": [
+    {
+      "type": "Input.Text",
+      "id": "name",
+      "label": "Name",
+      "placeholder": "e.g Notes App",
+      "maxLength": 100,
+      "isRequired": true,
+      "errorMessage": "This field is required",
+      "spacing": "medium"
+    },
+    {
+      "type": "Input.Text",
+      "id": "description",
+      "label": "Description",
+      "placeholder": "e.g A React Native app to take notes with offline interaction",
+      "maxLength": 500,
+      "isMultiline": true,
+      "isRequired": true,
+      "errorMessage": "This field is required",
+      "spacing": "medium"
+    },
+    {
+      "type": "Input.Text",
+      "id": "link",
+      "label": "Link",
+      "placeholder": "eg. www.google.com",
+      "maxLength": 1000,
+      "isRequired": true,
+      "errorMessage": "This field is required",
+      "spacing": "padding",
+      "style": "url"
+    },
+    {
+      "type": "TextBlock",
+      "text": " ",
+      "spacing": "medium"
+    }
+  ],
+  "actions": [
+    {
+      "type": "Action.Submit",
+      "title": "Add"
+    }
+  ]
+}

@@ -18,8 +18,11 @@ import ListDocumentationDialog, {
   listDocumentationDialogId,
 } from "../listDocumentationDialog/listDocumentationDialog";
 
+import AddDocumentationDialog, {
+  addDocumentationDialogId,
+} from "../addDocumentationDialog/addDocumentationDialog";
+
 const mainDocumentationDialogId = "mainDocumentationDialogId";
-const documentationDTOStateName = "documentationDTOStateName";
 const choicePromptId = "choicePromptId";
 const waterfallDialogId = "waterfallDialogId";
 
@@ -34,6 +37,7 @@ export default class MainDocumentationDialog extends ComponentDialog {
     this.addDialog(new ChoicePrompt(choicePromptId));
 
     this.addDialog(new ListDocumentationDialog());
+    this.addDialog(new AddDocumentationDialog(conversationState));
 
     this.addDialog(
       new WaterfallDialog(waterfallDialogId, [
@@ -73,6 +77,13 @@ export default class MainDocumentationDialog extends ComponentDialog {
 
     if (selection === "List") {
       return await stepContext.beginDialog(listDocumentationDialogId);
+    }
+
+    if (selection === "Add") {
+      return await stepContext.beginDialog(
+        addDocumentationDialogId,
+        this.conversationState
+      );
     }
 
     return await stepContext.continueDialog();
