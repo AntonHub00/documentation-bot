@@ -7,9 +7,9 @@ import {
   WaterfallStepContext,
 } from "botbuilder-dialogs";
 import { Activity } from "botframework-schema";
+import { buildTemplate } from "../utils/templateBuilder";
 
 import * as documentationCard from "./documentationCard.json";
-import * as ACData from "adaptivecards-templating";
 
 const listDocumentationDialogId = "listDocumentationDialogId";
 const textPromptId = "textPromptId";
@@ -40,20 +40,6 @@ class ListDocumentationDialog extends ComponentDialog {
     this.initialDialogId = waterfallDialogId;
   }
 
-  private buildTemplate(name: string, description: string, link: string) {
-    const template = new ACData.Template(documentationCard);
-
-    const cardPayload = template.expand({
-      $root: {
-        name,
-        description,
-        link,
-      },
-    });
-
-    return cardPayload;
-  }
-
   private async buildActivityDocumentationCards(
     cardsData: CardsData[]
   ): Promise<Partial<Activity>> {
@@ -61,7 +47,11 @@ class ListDocumentationDialog extends ComponentDialog {
       text: "Here's what I found:",
       attachments: cardsData.map((card) =>
         CardFactory.adaptiveCard(
-          this.buildTemplate(card.name, card.description, card.link)
+          buildTemplate(documentationCard, {
+            name: card.name,
+            description: card.description,
+            link: card.link,
+          })
         )
       ),
       attachmentLayout: "carousel",

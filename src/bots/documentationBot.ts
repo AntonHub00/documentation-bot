@@ -7,7 +7,7 @@ import {
   TurnContext,
 } from "botbuilder";
 import { Dialog } from "botbuilder-dialogs";
-import IDocumentationData from "../dialogs/IDocumentationData";
+import IDocumentationData from "../dialogs/shared/IDocumentationData";
 import MainDocumentationDialog from "../dialogs/mainDocumentationDialog/mainDocumentationDialog";
 import conversationState, {
   conversationStateAccessorName,

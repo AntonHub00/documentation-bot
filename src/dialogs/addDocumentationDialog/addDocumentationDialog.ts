@@ -1,8 +1,4 @@
-import {
-  CardFactory,
-  ConversationState,
-  StatePropertyAccessor,
-} from "botbuilder";
+import { CardFactory, StatePropertyAccessor } from "botbuilder";
 import {
   ChoicePrompt,
   ComponentDialog,
@@ -15,7 +11,8 @@ import { Activity } from "botframework-schema";
 import conversationState, {
   conversationStateAccessorName,
 } from "../../states/state";
-import IDocumentationData from "../IDocumentationData";
+import IDocumentationData from "../shared/IDocumentationData";
+import { buildTemplate } from "../utils/templateBuilder";
 
 import * as addDocumentationCard from "./addDocumentationCard.json";
 
@@ -23,6 +20,7 @@ const addDocumentationDialogId = "addDocumentationDialogId";
 const textPromptId = "textPromptId";
 const choicePromptId = "choicePromptId";
 const waterfallDialogId = "waterfallDialogId";
+const addActionName = "Add";
 
 class AddDocumentationDialog extends ComponentDialog {
   private conversationStateAccessor: StatePropertyAccessor<IDocumentationData>;
@@ -54,7 +52,13 @@ class AddDocumentationDialog extends ComponentDialog {
   ) {
     const activity: Partial<Activity> = {
       text: "Fill the form to add the documentation resource:",
-      attachments: [CardFactory.adaptiveCard(addDocumentationCard)],
+      attachments: [
+        CardFactory.adaptiveCard(
+          buildTemplate(addDocumentationCard, {
+            actionButtonName: addActionName,
+          })
+        ),
+      ],
     };
 
     await stepContext.context.sendActivity(activity);
@@ -103,4 +107,4 @@ class AddDocumentationDialog extends ComponentDialog {
 }
 
 export default AddDocumentationDialog;
-export { addDocumentationDialogId };
+export { addDocumentationDialogId, addActionName };
