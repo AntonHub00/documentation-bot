@@ -40,10 +40,7 @@ export default class DocumentationBot extends ActivityHandler {
         }
       }
 
-      await (this.mainDialog as MainDocumentationDialog).run(
-        context,
-        this.conversationStateAccesor
-      );
+      await context.sendActivity("Type something to show the actions");
 
       await next();
     });
@@ -54,10 +51,8 @@ export default class DocumentationBot extends ActivityHandler {
     });
 
     this.onMessage(async (context, next) => {
-      const cancelText = "Restarting...";
-
       if (context.activity.text === this.restartToken) {
-        await context.sendActivity(MessageFactory.text(cancelText, cancelText));
+        await context.sendActivity(MessageFactory.text("Restarting..."));
         await this.conversationStateAccesor.delete(context);
       }
 

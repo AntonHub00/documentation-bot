@@ -78,10 +78,8 @@ export default class MainDocumentationDialog extends ComponentDialog {
   }
 
   private async summaryStep(stepContext: WaterfallStepContext) {
-    const selection = stepContext.result;
-
     await stepContext.context.sendActivity(
-      `Thanks. You have selected "${selection}"`
+      "Type something to show the actions"
     );
 
     return await stepContext.endDialog();
