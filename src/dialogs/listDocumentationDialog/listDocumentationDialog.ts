@@ -43,6 +43,7 @@ class ListDocumentationDialog extends ComponentDialog {
       attachments: cardsData.map((card) =>
         CardFactory.adaptiveCard(
           buildTemplate(documentationCard, {
+            id: card.id,
             name: card.name,
             description: card.description,
             link: card.link,
@@ -74,21 +75,25 @@ class ListDocumentationDialog extends ComponentDialog {
 
     const testCards: IDocumentationData[] = [
       {
+        id: "1",
         name: "Documentation name 1",
         description: "Documentation description 1",
         link: "https://en.wikipedia.org/wiki/PDF",
       },
       {
+        id: "2",
         name: "Documentation name 2",
         description: "Documentation description 2",
         link: "https://en.wikipedia.org/wiki/PDF",
       },
       {
+        id: "3",
         name: "Documentation name 3",
         description: "Documentation description 3",
         link: "https://en.wikipedia.org/wiki/PDF",
       },
       {
+        id: "4",
         name: "Documentation name 4",
         description: "Documentation description 4",
         link: "https://en.wikipedia.org/wiki/PDF",
