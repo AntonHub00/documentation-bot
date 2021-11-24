@@ -28,6 +28,7 @@
           "type": "Action.Submit",
           "title": "Edit",
           "data": {
+            "actionName": "${listEditActionName}",
             "id": "${id}"
           }
         },

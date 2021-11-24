@@ -13,6 +13,8 @@ import conversationState, {
   conversationStateAccessorName,
 } from "../states/state";
 import { addActionName } from "../dialogs/addDocumentationDialog/addDocumentationDialog";
+import { editActionName } from "../dialogs/listDocumentationDialog/editDocumentationDialog/editDocumentationDialog";
+import { listEditActionButtonName } from "../dialogs/listDocumentationDialog/listDocumentationDialog";
 
 export default class DocumentationBot extends ActivityHandler {
   private restartToken = "restart";
@@ -47,7 +49,8 @@ export default class DocumentationBot extends ActivityHandler {
     });
 
     this.onTurn(async (context, next) => {
-      await this.fillStateWithDataFromAddDocumentationAdaptiveCard(context);
+      await this.validateToOpenEditOrDeleteDialog(context);
+      await this.fillStateWithDataFromAllowedAdaptiveCards(context);
       await next();
     });
 
@@ -72,14 +75,35 @@ export default class DocumentationBot extends ActivityHandler {
     });
   }
 
-  private async fillStateWithDataFromAddDocumentationAdaptiveCard(
+  // The "edit" and "delete" actions in the list dialog adaptive card will sent
+  // some data when clicked. We need to capture that "event" and sent a text to
+  // identify wich button was clicked. The text is required to be sent since the
+  // adaptive card is displayed in a loop with a text prompt. Because of that,
+  // we set the text simulating user input so that the text promt receives the
+  // text and then we can test if an action button was clicked and wich one.
+  private async validateToOpenEditOrDeleteDialog(context: TurnContext) {
+    const value = context.activity.value;
+
+    if (value?.actionName == listEditActionButtonName)
+      context.activity.text = listEditActionButtonName;
+  }
+
+  // If the user sent the form in the edit/add adaptive card, that "event" will
+  // be catched here. The data sent in the form need to be store in the state so
+  // it can be retrieved later in other waterfall dialog steps (due to dialogs
+  // limitations). Both the "add" and "edit" adaptive card/dialog will share
+  // state since both handle the same data and types and both can't be executed
+  // at the same time, so it shouldn't be problem to do it this way.
+  private async fillStateWithDataFromAllowedAdaptiveCards(
     context: TurnContext
   ) {
     const value = context.activity.value;
 
-    // Only continue if the user sent info from the "add documentation" adaptive
-    // card
-    if (value?.actionName !== addActionName) return;
+    // Only continue if the user sent info from the allowed adaptive cards
+    const cameFromAddCard = value?.actionName === addActionName;
+    const cameFromEditCard = value?.actionName === editActionName;
+
+    if (!(cameFromAddCard || cameFromEditCard)) return;
 
     if (value?.name && value?.description && value?.link) {
       const currentConversationState = await this.conversationStateAccesor.get(
