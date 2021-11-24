@@ -48,6 +48,19 @@ class ListDocumentationDialog extends ComponentDialog {
     this.initialDialogId = waterfallDialogId;
   }
 
+  private async customBeginDialog(
+    stepContext: WaterfallStepContext,
+    dialogId: string
+  ) {
+    const cardActionData = stepContext.context.activity.value;
+
+    const selectedCard = this.currentCardsResult.find(
+      (card) => card.id == cardActionData.id
+    );
+
+    return await stepContext.beginDialog(dialogId, selectedCard);
+  }
+
   private async buildActivityDocumentationCards(
     cardsData: IDocumentationData[]
   ): Promise<Partial<Activity>> {
@@ -91,28 +104,16 @@ class ListDocumentationDialog extends ComponentDialog {
     // not a default behaviour, so we programmed it inside the bot logic
     // ("onTurn").
     if (searchToken === listEditActionButtonName) {
-      const editActionData = stepContext.context.activity.value;
-
-      const selectedCard = this.currentCardsResult.find(
-        (card) => card.id == editActionData.id
-      );
-
-      return await stepContext.beginDialog(
-        editDocumentationDialogId,
-        selectedCard
+      return await this.customBeginDialog(
+        stepContext,
+        editDocumentationDialogId
       );
     }
 
     if (searchToken === listDeleteActionButtonName) {
-      const editActionData = stepContext.context.activity.value;
-
-      const selectedCard = this.currentCardsResult.find(
-        (card) => card.id == editActionData.id
-      );
-
-      return await stepContext.beginDialog(
-        deleteDocumentationDialogId,
-        selectedCard
+      return await this.customBeginDialog(
+        stepContext,
+        deleteDocumentationDialogId
       );
     }
 
