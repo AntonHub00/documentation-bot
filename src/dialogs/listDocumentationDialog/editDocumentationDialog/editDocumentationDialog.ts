@@ -34,7 +34,7 @@ class EditDocumentationDialog extends ComponentDialog {
 
     this.addDialog(new TextPrompt(textPromptId));
 
-    this.addDialog(new ChoicePrompt(textPromptId));
+    this.addDialog(new ChoicePrompt(choicePromptId));
 
     this.addDialog(
       new WaterfallDialog(waterfallDialogId, [
