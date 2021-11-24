@@ -89,7 +89,7 @@ class EditDocumentationDialog extends ComponentDialog {
     const description = currentConversationState.description;
     const link = currentConversationState.link;
 
-    if ([name, description, link].includes("")) {
+    if (!(name && description && link)) {
       await stepContext.context.sendActivity("Documentation data discarded!");
     } else {
       // NOTE: Perform some save logic for the given search token.
