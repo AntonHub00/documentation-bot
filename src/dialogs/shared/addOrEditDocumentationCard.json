@@ -11,7 +11,8 @@
       "maxLength": 100,
       "isRequired": true,
       "errorMessage": "This field is required",
-      "spacing": "medium"
+      "spacing": "medium",
+      "value": "${nameFieldvalue}"
     },
     {
       "type": "Input.Text",
@@ -22,7 +23,8 @@
       "isMultiline": true,
       "isRequired": true,
       "errorMessage": "This field is required",
-      "spacing": "medium"
+      "spacing": "medium",
+      "value": "${descriptionFieldvalue}"
     },
     {
       "type": "Input.Text",
@@ -33,7 +35,8 @@
       "isRequired": true,
       "errorMessage": "This field is required",
       "spacing": "padding",
-      "style": "url"
+      "style": "url",
+      "value": "${linkFieldvalue}"
     },
     {
       "type": "TextBlock",

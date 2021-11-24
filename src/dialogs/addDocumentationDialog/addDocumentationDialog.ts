@@ -55,6 +55,9 @@ class AddDocumentationDialog extends ComponentDialog {
       attachments: [
         CardFactory.adaptiveCard(
           buildTemplate(addOrEditDocumentationCard, {
+            nameFieldValue: "",
+            descriptionFieldValue: "",
+            linkFieldValue: "",
             actionButtonName: addActionName,
           })
         ),
