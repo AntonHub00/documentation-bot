@@ -9,6 +9,9 @@ import {
 import { Activity } from "botframework-schema";
 import IDocumentationData from "../shared/IDocumentationData";
 import { buildTemplate } from "../utils/templateBuilder";
+import DeleteDocumentationDialog, {
+  deleteDocumentationDialogId,
+} from "./deleteDocumentationDialog/deleteDocumentationDialog";
 
 import * as documentationCard from "./documentationCard.json";
 import EditDocumentationDialog, {
@@ -16,6 +19,7 @@ import EditDocumentationDialog, {
 } from "./editDocumentationDialog/editDocumentationDialog";
 
 const listEditActionButtonName = "listEditActionButtonName";
+const listDeleteActionButtonName = "listDeleteActionButtonName";
 const listDocumentationDialogId = "listDocumentationDialogId";
 const textPromptId = "textPromptId";
 const waterfallDialogId = "waterfallDialogId";
@@ -30,6 +34,8 @@ class ListDocumentationDialog extends ComponentDialog {
     this.addDialog(new TextPrompt(textPromptId));
 
     this.addDialog(new EditDocumentationDialog());
+
+    this.addDialog(new DeleteDocumentationDialog());
 
     this.addDialog(
       new WaterfallDialog(waterfallDialogId, [
@@ -51,6 +57,7 @@ class ListDocumentationDialog extends ComponentDialog {
         CardFactory.adaptiveCard(
           buildTemplate(documentationCard, {
             listEditActionName: listEditActionButtonName,
+            listDeleteActionName: listDeleteActionButtonName,
             id: card.id,
             name: card.name,
             description: card.description,
@@ -92,6 +99,19 @@ class ListDocumentationDialog extends ComponentDialog {
 
       return await stepContext.beginDialog(
         editDocumentationDialogId,
+        selectedCard
+      );
+    }
+
+    if (searchToken === listDeleteActionButtonName) {
+      const editActionData = stepContext.context.activity.value;
+
+      const selectedCard = this.currentCardsResult.find(
+        (card) => card.id == editActionData.id
+      );
+
+      return await stepContext.beginDialog(
+        deleteDocumentationDialogId,
         selectedCard
       );
     }
@@ -144,4 +164,8 @@ class ListDocumentationDialog extends ComponentDialog {
 }
 
 export default ListDocumentationDialog;
-export { listDocumentationDialogId, listEditActionButtonName };
+export {
+  listDocumentationDialogId,
+  listEditActionButtonName,
+  listDeleteActionButtonName,
+};

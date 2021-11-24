@@ -23,22 +23,6 @@
           "type": "Action.OpenUrl",
           "title": "Open",
           "url": "${link}"
-        },
-        {
-          "type": "Action.Submit",
-          "title": "Edit",
-          "data": {
-            "actionName": "${listEditActionName}",
-            "id": "${id}"
-          }
-        },
-        {
-          "type": "Action.Submit",
-          "title": "Delete",
-          "data": {
-            "actionName": "${listDeleteActionName}",
-            "id": "${id}"
-          }
         }
       ]
     }

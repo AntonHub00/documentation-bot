@@ -14,7 +14,10 @@ import conversationState, {
 } from "../states/state";
 import { addActionName } from "../dialogs/addDocumentationDialog/addDocumentationDialog";
 import { editActionName } from "../dialogs/listDocumentationDialog/editDocumentationDialog/editDocumentationDialog";
-import { listEditActionButtonName } from "../dialogs/listDocumentationDialog/listDocumentationDialog";
+import {
+  listDeleteActionButtonName,
+  listEditActionButtonName,
+} from "../dialogs/listDocumentationDialog/listDocumentationDialog";
 
 export default class DocumentationBot extends ActivityHandler {
   private restartToken = "restart";
@@ -86,6 +89,9 @@ export default class DocumentationBot extends ActivityHandler {
 
     if (value?.actionName == listEditActionButtonName)
       context.activity.text = listEditActionButtonName;
+
+    if (value?.actionName == listDeleteActionButtonName)
+      context.activity.text = listDeleteActionButtonName;
   }
 
   // If the user sent the form in the edit/add adaptive card, that "event" will
