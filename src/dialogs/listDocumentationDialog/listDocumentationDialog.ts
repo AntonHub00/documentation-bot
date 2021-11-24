@@ -7,6 +7,7 @@ import {
   WaterfallStepContext,
 } from "botbuilder-dialogs";
 import { Activity } from "botframework-schema";
+import IDocumentationData from "../shared/IDocumentationData";
 import { buildTemplate } from "../utils/templateBuilder";
 
 import * as documentationCard from "./documentationCard.json";
@@ -14,12 +15,6 @@ import * as documentationCard from "./documentationCard.json";
 const listDocumentationDialogId = "listDocumentationDialogId";
 const textPromptId = "textPromptId";
 const waterfallDialogId = "waterfallDialogId";
-
-interface CardsData {
-  name: string;
-  description: string;
-  link: string;
-}
 
 class ListDocumentationDialog extends ComponentDialog {
   private filterDoneToken = "done";
@@ -41,7 +36,7 @@ class ListDocumentationDialog extends ComponentDialog {
   }
 
   private async buildActivityDocumentationCards(
-    cardsData: CardsData[]
+    cardsData: IDocumentationData[]
   ): Promise<Partial<Activity>> {
     const activity: Partial<Activity> = {
       text: "Here's what I found:",
@@ -77,7 +72,7 @@ class ListDocumentationDialog extends ComponentDialog {
 
     // NOTE: Perform some filter logic for the given search token.
 
-    const testCards: CardsData[] = [
+    const testCards: IDocumentationData[] = [
       {
         name: "Documentation name 1",
         description: "Documentation description 1",
