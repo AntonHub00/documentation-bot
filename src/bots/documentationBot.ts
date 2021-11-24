@@ -115,6 +115,7 @@ export default class DocumentationBot extends ActivityHandler {
       const currentConversationState = await this.conversationStateAccesor.get(
         context
       );
+      currentConversationState.id = value?.name;
       currentConversationState.name = value.name;
       currentConversationState.description = value.description;
       currentConversationState.link = value.link;
