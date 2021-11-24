@@ -12,6 +12,7 @@ import MainDocumentationDialog from "../dialogs/mainDocumentationDialog/mainDocu
 import conversationState, {
   conversationStateAccessorName,
 } from "../states/state";
+import { addActionName } from "../dialogs/addDocumentationDialog/addDocumentationDialog";
 
 export default class DocumentationBot extends ActivityHandler {
   private restartToken = "restart";
@@ -76,9 +77,11 @@ export default class DocumentationBot extends ActivityHandler {
   ) {
     const value = context.activity.value;
 
-    // If true it means that the user sent info from the "add documentation"
-    // adaptive card
-    if (value && "name" in value && "description" in value && "link" in value) {
+    // Only continue if the user sent info from the "add documentation" adaptive
+    // card
+    if (value?.actionName !== addActionName) return;
+
+    if (value?.name && value?.description && value?.link) {
       const currentConversationState = await this.conversationStateAccesor.get(
         context
       );
