@@ -14,7 +14,7 @@ import conversationState, {
 import IDocumentationData from "../shared/IDocumentationData";
 import { buildTemplate } from "../utils/templateBuilder";
 
-import * as addDocumentationCard from "./addDocumentationCard.json";
+import * as addOrEditDocumentationCard from "../shared/addOrEditDocumentationCard.json";
 
 const addDocumentationDialogId = "addDocumentationDialogId";
 const textPromptId = "textPromptId";
@@ -54,7 +54,7 @@ class AddDocumentationDialog extends ComponentDialog {
       text: "Fill the form to add the documentation resource:",
       attachments: [
         CardFactory.adaptiveCard(
-          buildTemplate(addDocumentationCard, {
+          buildTemplate(addOrEditDocumentationCard, {
             actionButtonName: addActionName,
           })
         ),
