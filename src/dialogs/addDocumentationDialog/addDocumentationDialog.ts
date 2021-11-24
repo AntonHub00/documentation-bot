@@ -20,7 +20,7 @@ const addDocumentationDialogId = "addDocumentationDialogId";
 const textPromptId = "textPromptId";
 const choicePromptId = "choicePromptId";
 const waterfallDialogId = "waterfallDialogId";
-const addActionName = "Add";
+const addActionName = "addActionName";
 
 class AddDocumentationDialog extends ComponentDialog {
   private conversationStateAccessor: StatePropertyAccessor<IDocumentationData>;
@@ -58,7 +58,8 @@ class AddDocumentationDialog extends ComponentDialog {
             nameFieldValue: "",
             descriptionFieldValue: "",
             linkFieldValue: "",
-            actionButtonName: addActionName,
+            actionButtonName: "Add",
+            actionName: addActionName,
           })
         ),
       ],
