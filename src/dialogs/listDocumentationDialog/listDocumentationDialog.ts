@@ -110,6 +110,10 @@ class ListDocumentationDialog extends ComponentDialog {
       );
     }
 
+    // If the delete button in the adaptive card was clicked, the bot will sent
+    // a text so we can identify that the delete button was clicked. This action
+    // in not a default behaviour, so we programmed it inside the bot logic
+    // ("onTurn").
     if (searchToken === listDeleteActionButtonName) {
       return await this.customBeginDialog(
         stepContext,
