@@ -15,6 +15,8 @@ import IDocumentationData from "../../shared/IDocumentationData";
 import { buildTemplate } from "../../utils/templateBuilder";
 
 import * as addOrEditDocumentationCard from "../../shared/addOrEditDocumentationCard.json";
+import IBotDocumentationBackendService from "../../../services/IBotDocumentationBackendService";
+import documentationBotBackendServiceInstance from "../../../services/DocumentationBotBackendService";
 
 const editDocumentationDialogId = "addDocumentationDialogId";
 const textPromptId = "textPromptId";
@@ -24,9 +26,12 @@ const editActionName = "editActionName";
 
 class EditDocumentationDialog extends ComponentDialog {
   private conversationStateAccessor: StatePropertyAccessor<IDocumentationData>;
+  private backendServiceInstance: IBotDocumentationBackendService;
 
   constructor() {
     super(editDocumentationDialogId);
+
+    this.backendServiceInstance = documentationBotBackendServiceInstance;
 
     this.conversationStateAccessor = conversationState.createProperty(
       conversationStateAccessorName
@@ -94,12 +99,12 @@ class EditDocumentationDialog extends ComponentDialog {
     if (!(id && name && description && link)) {
       await stepContext.context.sendActivity("Documentation data discarded!");
     } else {
-      // NOTE: Perform some save logic for the given search token.
+      await this.backendServiceInstance.update({ id, name, description, link });
       await stepContext.context.sendActivity("Documentation data saved");
     }
 
     this.conversationStateAccessor.set(stepContext.context, {
-      id: "",
+      id: undefined,
       name: "",
       description: "",
       link: "",
