@@ -1,5 +1,5 @@
 export default interface IDocumentationData {
-  id?: string;
+  id?: number;
   name: string;
   description: string;
   link: string;
