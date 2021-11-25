@@ -6,6 +6,8 @@ import {
   WaterfallDialog,
   WaterfallStepContext,
 } from "botbuilder-dialogs";
+import documentationBotBackendServiceInstance from "../../../services/DocumentationBotBackendService";
+import IBotDocumentationBackendService from "../../../services/IBotDocumentationBackendService";
 import IDocumentationData from "../../shared/IDocumentationData";
 import { buildTemplate } from "../../utils/templateBuilder";
 import * as documentationCardWithoutEditAndDeleteActions from "./documentationCardWithoutEditAndDeleteActions.json";
@@ -16,8 +18,12 @@ const waterfallDialogId = "waterfallDialogId";
 const deleteActionName = "deleteActionName";
 
 class DeleteDocumentationDialog extends ComponentDialog {
+  private backendServiceInstance: IBotDocumentationBackendService;
+
   constructor() {
     super(deleteDocumentationDialogId);
+
+    this.backendServiceInstance = documentationBotBackendServiceInstance;
 
     this.addDialog(new ConfirmPrompt(confirmPromptId));
 
@@ -68,8 +74,10 @@ class DeleteDocumentationDialog extends ComponentDialog {
     const doDeleteDocumentation = stepContext.result;
 
     if (doDeleteDocumentation) {
-      // NOTE: Perform some deletion logic for the given documentation.
       const documentationId = stepContext.options.id;
+
+      await this.backendServiceInstance.delete(documentationId);
+
       await stepContext.context.sendActivity("Documentation **deleted**!");
     } else {
       await stepContext.context.sendActivity("Documentation **not deleted**");
