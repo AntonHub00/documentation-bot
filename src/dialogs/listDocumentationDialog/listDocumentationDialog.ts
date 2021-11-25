@@ -7,6 +7,8 @@ import {
   WaterfallStepContext,
 } from "botbuilder-dialogs";
 import { Activity } from "botframework-schema";
+import documentationBotBackendServiceInstance from "../../services/DocumentationBotBackendService";
+import IBotDocumentationBackendService from "../../services/IBotDocumentationBackendService";
 import IDocumentationData from "../shared/IDocumentationData";
 import { buildTemplate } from "../utils/templateBuilder";
 import DeleteDocumentationDialog, {
@@ -27,9 +29,12 @@ const waterfallDialogId = "waterfallDialogId";
 class ListDocumentationDialog extends ComponentDialog {
   private filterDoneToken = "done";
   private currentCardsResult: IDocumentationData[] = [];
+  private backendServiceInstance: IBotDocumentationBackendService;
 
   constructor() {
     super(listDocumentationDialogId);
+
+    this.backendServiceInstance = documentationBotBackendServiceInstance;
 
     this.addDialog(new TextPrompt(textPromptId));
 
@@ -59,6 +64,18 @@ class ListDocumentationDialog extends ComponentDialog {
     );
 
     return await stepContext.beginDialog(dialogId, selectedCard);
+  }
+
+  private async getDocumentations(text: string) {
+    let cards: IDocumentationData[];
+
+    if (text === "*") {
+      cards = await this.backendServiceInstance.findAll();
+    } else {
+      cards = await this.backendServiceInstance.findByText(text);
+    }
+
+    return cards;
   }
 
   private async buildActivityDocumentationCards(
@@ -121,42 +138,18 @@ class ListDocumentationDialog extends ComponentDialog {
       );
     }
 
-    // NOTE: Perform some filter logic for the given search token.
+    const cards = await this.getDocumentations(searchToken);
 
-    const testCards: IDocumentationData[] = [
-      {
-        id: "1",
-        name: "Documentation name 1",
-        description: "Documentation description 1",
-        link: "https://en.wikipedia.org/wiki/PDF",
-      },
-      {
-        id: "2",
-        name: "Documentation name 2",
-        description: "Documentation description 2",
-        link: "https://en.wikipedia.org/wiki/PDF",
-      },
-      {
-        id: "3",
-        name: "Documentation name 3",
-        description: "Documentation description 3",
-        link: "https://en.wikipedia.org/wiki/PDF",
-      },
-      {
-        id: "4",
-        name: "Documentation name 4",
-        description: "Documentation description 4",
-        link: "https://en.wikipedia.org/wiki/PDF",
-      },
-    ];
+    if (cards?.length) {
+      const cardsActivity = await this.buildActivityDocumentationCards(cards);
+      await stepContext.context.sendActivity(cardsActivity);
+    } else {
+      await stepContext.context.sendActivity("**No documentation found**");
+    }
 
     // We store the last search result so we can access the cards in the next
     // loop if the user clicks the "edit" or "delete" button.
-    this.currentCardsResult = testCards;
-
-    const cardsActivity = await this.buildActivityDocumentationCards(testCards);
-
-    await stepContext.context.sendActivity(cardsActivity);
+    this.currentCardsResult = cards;
 
     return await stepContext.replaceDialog(listDocumentationDialogId);
   }
