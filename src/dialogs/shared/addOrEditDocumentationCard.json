@@ -49,7 +49,8 @@
       "type": "Action.Submit",
       "title": "${actionButtonName}",
       "data": {
-        "actionName": "${actionName}"
+        "actionName": "${actionName}",
+        "id": "${id}"
       }
     }
   ]

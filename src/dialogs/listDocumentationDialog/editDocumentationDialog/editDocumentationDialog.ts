@@ -55,6 +55,7 @@ class EditDocumentationDialog extends ComponentDialog {
       attachments: [
         CardFactory.adaptiveCard(
           buildTemplate(addOrEditDocumentationCard, {
+            id: stepContext.options.id,
             nameFieldValue: stepContext.options.name,
             descriptionFieldValue: stepContext.options.description,
             linkFieldValue: stepContext.options.link,

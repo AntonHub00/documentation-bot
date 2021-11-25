@@ -65,6 +65,7 @@ class AddDocumentationDialog extends ComponentDialog {
             linkFieldValue: "",
             actionButtonName: "Add",
             actionName: addActionName,
+            id: undefined,
           })
         ),
       ],
@@ -113,7 +114,7 @@ class AddDocumentationDialog extends ComponentDialog {
     }
 
     this.conversationStateAccessor.set(stepContext.context, {
-      id: "",
+      id: undefined,
       name: "",
       description: "",
       link: "",
