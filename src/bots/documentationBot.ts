@@ -1,12 +1,13 @@
 import {
   ActivityHandler,
+  ActivityTypes,
   BotState,
   ConversationState,
   MessageFactory,
   StatePropertyAccessor,
   TurnContext,
 } from "botbuilder";
-import { Dialog } from "botbuilder-dialogs";
+import { Dialog, runDialog } from "botbuilder-dialogs";
 import IDocumentationData from "../dialogs/shared/IDocumentationData";
 import MainDocumentationDialog from "../dialogs/mainDocumentationDialog/mainDocumentationDialog";
 import conversationState, {
@@ -52,30 +53,33 @@ export default class DocumentationBot extends ActivityHandler {
     });
 
     this.onTurn(async (context, next) => {
-      await this.validateToOpenEditOrDeleteDialog(context);
-      await this.fillStateWithDataFromAllowedAdaptiveCards(context);
-      await next();
-    });
+      if (context.activity.type !== ActivityTypes.ConversationUpdate) {
+        if (context.activity.type === ActivityTypes.Message) {
+          if (context.activity.text === this.restartToken) {
+            await context.sendActivity(MessageFactory.text("Restarting..."));
+            await this.conversationStateAccesor.delete(context);
+          } else {
+            await this.validateToOpenEditOrDeleteDialog(context);
+            await this.fillStateWithDataFromAllowedAdaptiveCards(context);
+          }
+        }
 
-    this.onMessage(async (context, next) => {
-      if (context.activity.text === this.restartToken) {
-        await context.sendActivity(MessageFactory.text("Restarting..."));
-        await this.conversationStateAccesor.delete(context);
+        await runDialog(
+          this.mainDialog,
+          context,
+          this.conversationState.createProperty(conversationStateAccessorName)
+        );
       }
 
-      await (this.mainDialog as MainDocumentationDialog).run(
-        context,
-        this.conversationStateAccesor
-      );
-
       await next();
     });
+  }
 
-    this.onDialog(async (context, next) => {
-      // Save any state changes. The load happened during the execution of the Dialog.
-      await this.conversationState.saveChanges(context, false);
-      await next();
-    });
+  async run(context: TurnContext) {
+    await super.run(context);
+
+    // Save any state changes. The load happened during the execution of the Dialog.
+    await this.conversationState.saveChanges(context, false);
   }
 
   // The "edit" and "delete" actions in the list dialog adaptive card will sent
