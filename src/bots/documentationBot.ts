@@ -24,14 +24,14 @@ export default class DocumentationBot extends ActivityHandler {
   private restartToken = "restart";
   private mainDialog: Dialog;
   private conversationState: BotState;
-  private conversationStateAccesor: StatePropertyAccessor;
+  private conversationStateAccessor: StatePropertyAccessor;
 
   constructor() {
     super();
 
     this.mainDialog = new MainDocumentationDialog();
     this.conversationState = conversationState as ConversationState;
-    this.conversationStateAccesor = this.conversationState.createProperty(
+    this.conversationStateAccessor = this.conversationState.createProperty(
       conversationStateAccessorName
     );
 
@@ -57,7 +57,7 @@ export default class DocumentationBot extends ActivityHandler {
         if (context.activity.type === ActivityTypes.Message) {
           if (context.activity.text === this.restartToken) {
             await context.sendActivity(MessageFactory.text("Restarting..."));
-            await this.conversationStateAccesor.delete(context);
+            await this.conversationStateAccessor.delete(context);
           } else {
             await this.validateToOpenEditOrDeleteDialog(context);
             await this.fillStateWithDataFromAllowedAdaptiveCards(context);
@@ -67,7 +67,7 @@ export default class DocumentationBot extends ActivityHandler {
         await runDialog(
           this.mainDialog,
           context,
-          this.conversationStateAccesor
+          this.conversationStateAccessor
         );
       }
 
@@ -116,7 +116,7 @@ export default class DocumentationBot extends ActivityHandler {
     if (!(cameFromAddCard || cameFromEditCard)) return;
 
     if (value?.name && value?.description && value?.link) {
-      const currentConversationState = await this.conversationStateAccesor.get(
+      const currentConversationState = await this.conversationStateAccessor.get(
         context
       );
       currentConversationState.id = value?.id;
