@@ -48,7 +48,7 @@ localhost or running remotely through a tunnel.
 
 - Launch Bot Framework Emulator
 - File -> Open Bot
-- Enter a Bot URL of `http://localhost:3978/api/documentation-bot`
+- Enter a Bot URL of `http://localhost:3978/api/messages`
 
 ## Deploy the bot to Azure
 

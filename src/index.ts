@@ -18,10 +18,7 @@ const server = restify.createServer({ maxParamLength: 1000 });
 
 server.use(restify.plugins.bodyParser());
 
-server.post(
-  "/api/documentation-bot",
-  documentationBotControllerInstance.process
-);
+server.post("/api/messages", documentationBotControllerInstance.process);
 
 server.listen(process.env.port || process.env.PORT || 3978, () =>
   console.log(`\n${server.name} listening to ${server.url}`)
