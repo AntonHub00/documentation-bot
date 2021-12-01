@@ -16,6 +16,8 @@ const documentationBotControllerInstance = new DocumentationBotController(
 // See: https://github.com/microsoft/BotBuilder-Samples/issues/2194.
 const server = restify.createServer({ maxParamLength: 1000 });
 
+server.use(restify.plugins.bodyParser());
+
 server.post(
   "/api/documentation-bot",
   documentationBotControllerInstance.process
