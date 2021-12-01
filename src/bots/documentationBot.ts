@@ -24,7 +24,7 @@ export default class DocumentationBot extends ActivityHandler {
   private restartToken = "restart";
   private mainDialog: Dialog;
   private conversationState: BotState;
-  private conversationStateAccesor: StatePropertyAccessor<IDocumentationData>;
+  private conversationStateAccesor: StatePropertyAccessor;
 
   constructor() {
     super();
@@ -67,7 +67,7 @@ export default class DocumentationBot extends ActivityHandler {
         await runDialog(
           this.mainDialog,
           context,
-          this.conversationState.createProperty(conversationStateAccessorName)
+          this.conversationStateAccesor
         );
       }
 
