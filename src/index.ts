@@ -10,7 +10,11 @@ const documentationBotControllerInstance = new DocumentationBotController(
   documentationBotInstance
 );
 
-const server = restify.createServer();
+// Create HTTP server.
+// maxParamLength defaults to 100, which is too short for the conversationId
+// created in skillConversationIdFactory.
+// See: https://github.com/microsoft/BotBuilder-Samples/issues/2194.
+const server = restify.createServer({ maxParamLength: 1000 });
 
 server.post(
   "/api/documentation-bot",
